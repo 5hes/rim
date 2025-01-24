@@ -37,6 +37,8 @@ jobs:
         rm /home/runner/.cargo/bin/cargo-fmt
         bash rustup-init.sh -y --default-toolchain nightly --target x86_64-unknown-linux-musl
         rustup target add aarch64-unknown-linux-musl --toolchain=nightly
+        file $(which cargo)
+        file $(which rustc)
         
     - name: Check compiler
       run: |
@@ -46,6 +48,7 @@ jobs:
 
     - name: Build
       run: |
+        git config --global url.https://github.com/.insteadOf git://github.com/
         export CC_aarch64_unknown_linux_musl=clang-19
         export AR_aarch64_unknown_linux_musl=llvm-ar-19
         # export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
