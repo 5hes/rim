@@ -13,8 +13,15 @@ rand = "*"
 serde = "*"
 serde_derive = "*"
 term = "*"
-termkey-rs = { git = "git://github.com/mathall/termkey-rs.git" }
+termkey-rs = { git = "https://github.com/mathall/termkey-rs.git" }
 tokio = { version = "*", features = ["rt", "time"] }
 unicode-width = "*"
 uuid = { version = "*", features = ["v4"] }
 vec_map = "*"
+
+[profile.release]
+codegen-units = 1
+level = "3"
+strip = true
+lto = true
+panic = "abort"
