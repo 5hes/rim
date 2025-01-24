@@ -25,6 +25,7 @@ jobs:
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 19 all
+        sudo apt-get install musl
         
     - name: Setup environment
       run: |
@@ -34,7 +35,7 @@ jobs:
         rm /home/runner/.cargo/bin/rust-analyzer
         rm /home/runner/.cargo/bin/rustfmt
         rm /home/runner/.cargo/bin/cargo-fmt
-        bash rustup-init.sh -y --default-toolchain nightly
+        bash rustup-init.sh -y --default-toolchain nightly --target x86_64-unknown-linux-musl
         rustup target add aarch64-unknown-linux-musl --toolchain=nightly
         
     - name: Check compiler
