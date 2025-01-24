@@ -31,6 +31,9 @@ jobs:
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rustup-init.sh
         chmod 777 rustup-init.sh
         ./rustup-init.sh --help
+        rm /home/runner/.cargo/bin/rust-analyzer
+        rm /home/runner/.cargo/bin/rustfmt
+        rm /home/runner/.cargo/bin/cargo-fmt
         bash rustup-init.sh -y --default-toolchain nightly
         rustup target add aarch64-unknown-linux-musl --toolchain=nightly
         
@@ -46,9 +49,9 @@ jobs:
         export AR_aarch64_unknown_linux_musl=llvm-ar-19
         # export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
 
-        # rm /home/runner/.cargo/bin/rust-analyzer
-        # rm /home/runner/.cargo/bin/rustfmt
-        # rm /home/runner/.cargo/bin/cargo-fmt
+        rm /home/runner/.cargo/bin/rust-analyzer
+        rm /home/runner/.cargo/bin/rustfmt
+        rm /home/runner/.cargo/bin/cargo-fmt
         rustup update
         export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=ld.lld-19
         export CC=clang-19
