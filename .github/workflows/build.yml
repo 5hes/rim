@@ -1,0 +1,79 @@
+name: Build
+on:
+  push:
+    branches:
+    - master
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Build binary for aarch64"
+        required: true
+        type: boolean
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup
+      run: |
+        sudo apt-get update
+        # 
+        sudo apt-get install musl-tools musl musl-dev build-essential pkg-config cmake libssl-dev zlib1g-dev libsqlite3-dev protobuf-compiler libc6-dev-arm64-cross gcc-multilib
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 19 all
+        
+    - name: Setup environment
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rustup-init.sh
+        chmod 777 rustup-init.sh
+        ./rustup-init.sh --help
+        bash rustup-init.sh -y --default-toolchain nightly
+        rustup target add aarch64-unknown-linux-musl --toolchain=nightly
+        
+    - name: Check compiler
+      run: |
+        # clang -v
+        # clang-19 -v
+        # llvm-ar-19 --version
+
+    - name: Build
+      run: |
+        export CC_aarch64_unknown_linux_musl=clang-19
+        export AR_aarch64_unknown_linux_musl=llvm-ar-19
+        # export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
+
+        # rm /home/runner/.cargo/bin/rust-analyzer
+        # rm /home/runner/.cargo/bin/rustfmt
+        # rm /home/runner/.cargo/bin/cargo-fmt
+        rustup update
+        export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=ld.lld-19
+        export CC=clang-19
+        export CXX=clang++-19
+        CC=clang-19 cargo build --target aarch64-unknown-linux-musl --release
+
+    - name: Check info
+      run: |
+        ls -ltrah
+        ls -ltrah target/aarch64-unknown-linux-musl/release/
+        tree
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        path: target/aarch64-unknown-linux-musl/release/
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary
+        path: target/aarch64-unknown-linux-musl/release/rim
+
+    - name: help
+      run: |
+        cargo --help
+        echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        cargo build --help
